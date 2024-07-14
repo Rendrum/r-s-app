@@ -1,7 +1,28 @@
-import Header from "./components/Header";
-import CoreConcept from "./components/CoreConcept";
-import { CORE_CONCEPTS } from './data';
-function App() {
+import { useState } from 'react';
+import { CORE_CONCEPTS, EXAMPLES } from './data.js';
+import Header from "./components/Header/Header";
+import TabButton from "./components/TabButton/TabButton";
+import CoreConcept from "./components/CoreConcept/CoreConcept";
+
+export default function App() {
+  const [selectedTopic, setSelectedTopic] = useState();
+
+  function handleSelect(selectedButton) {
+    setSelectedTopic(selectedButton);
+  }
+
+  let tabContent = <p>Please select a topic</p>
+  if (selectedTopic) {
+    tabContent = (<div id="tab-content">
+      <h3>{EXAMPLES[selectedTopic].title}</h3>
+      <p>{EXAMPLES[selectedTopic].description}</p>
+      <pre>
+        <code>
+          {EXAMPLES[selectedTopic].code}
+        </code>
+      </pre>
+    </div>);
+  }
   return (
     <div>
       <Header />
@@ -9,31 +30,20 @@ function App() {
         <section id="core-concepts">
           <h2>Core Concepts</h2>
           <ul>
-            <CoreConcept
-              title={CORE_CONCEPTS[0].title}
-              description={CORE_CONCEPTS[0].description}
-              image={CORE_CONCEPTS[0].image}
-            />
-            <CoreConcept
-              title={CORE_CONCEPTS[1].title}
-              description={CORE_CONCEPTS[1].description}
-              image={CORE_CONCEPTS[1].image}
-            />
-            <CoreConcept
-              title={CORE_CONCEPTS[2].title}
-              description={CORE_CONCEPTS[2].description}
-              image={CORE_CONCEPTS[2].image}
-            />
-            <CoreConcept
-              title={CORE_CONCEPTS[3].title}
-              description={CORE_CONCEPTS[3].description}
-              image={CORE_CONCEPTS[3].image}
-            />
+            {CORE_CONCEPTS.map((concepetItem) => <CoreConcept key={concepetItem.title} {...concepetItem} />)}
           </ul>
+        </section>
+        <section id="examples">
+          <h2>Examples</h2>
+          <menu>
+            <TabButton isActive={selectedTopic === 'components'} onSelect={() => handleSelect('components')}> Components </TabButton>
+            <TabButton isActive={selectedTopic === 'jsx'} onSelect={() => handleSelect('jsx')}> JSX </TabButton>
+            <TabButton isActive={selectedTopic === 'props'} onSelect={() => handleSelect('props')}> Props </TabButton>
+            <TabButton isActive={selectedTopic === 'state'} onSelect={() => handleSelect('state')}> State </TabButton>
+          </menu>
+          {tabContent}
         </section>
       </main>
     </div>
   );
 }
-
-export default App;
